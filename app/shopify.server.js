@@ -20,7 +20,7 @@ const __dirname = path.dirname(__filename);
 dotenv.config();
 
 const SHOP_DOMAIN = 'd2c-apps.myshopify.com';
-const ACCESS_TOKEN = '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';
+const ACCESS_TOKEN = process.env.ACCESS_TOKEN_D2C_APPS;
 const FILE_PATH = path.join(__dirname, "liquid", "../sections/hero-section.liquid");
 const API_VERSION = "2024-01";
 

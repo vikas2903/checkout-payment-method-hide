@@ -21,7 +21,7 @@ dotenv.config();
 
 const SHOP_DOMAIN = 'd2c-apps.myshopify.com';
 const ACCESS_TOKEN = process.env.ACCESS_TOKEN_D2C_APPS || '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';
-const FILE_PATH = path.join(__dirname, "liquid", "../sections/hero-section.liquid");
+const FILE_PATH = path.join(__dirname, "liquid", "./app/sections/hero-section");
 const API_VERSION = "2024-01";
 
 if (!SHOP_DOMAIN || !ACCESS_TOKEN) {
@@ -90,10 +90,7 @@ run();
 
 // Database Connection 
 
-moongose.connect(process.env.MONGO_URI,{
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
+moongose.connect(process.env.MONGO_URI)
 .then(() => {
   console.log('Connected to MongoDB');
 })

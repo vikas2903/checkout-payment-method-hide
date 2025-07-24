@@ -1,0 +1,149 @@
+{% assign upsell_products = product.metafields.custom.upsell_products %}
+
+{% if upsell_products != blank %}
+  <style>
+    .upsell-box {
+      background-color: {{block.settings.upsell_bg}};
+      color: {{block.settings.upsell_text}};
+      display: flex;
+      align-items: center;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      max-width: 420px;
+    }
+
+    .upsell-box input[type="checkbox"] {
+      margin-right: 12px;
+    }
+
+    .upsell-box img {
+      width: 50px;
+      height: auto;
+      margin-right: 12px;
+      border-radius: 4px;
+    }
+
+    .upsell-box .upsell-text {
+      font-size: 14px;
+    }
+
+    .upsell-box .upsell-title {
+      font-weight: bold;
+      font-size: {{ block.settings.upsell-font-size }}px;
+    }
+  </style>
+
+  <div id="upsell-container">
+    {% for upsell_product in upsell_products.value %}
+      <div class="upsell-box">
+        <input type="checkbox"
+               class="upsell-checkbox"
+               data-variant-id="{{ upsell_product.variants.first.id }}"
+               id="upsell_{{ forloop.index }}" />
+        <img src="{{ upsell_product.featured_image | img_url: '100x100' }}" alt="{{ upsell_product.title }}" />
+        <div class="upsell-text">
+          <div class="upsell-title">{{ upsell_product.title }}</div>
+          <div>➡️ Pair With 🎉</div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const checkboxes = document.querySelectorAll(".upsell-checkbox");
+
+      checkboxes.forEach((checkbox) => {
+        checkbox.addEventListener("change", function () {
+          const variantId = this.dataset.variantId;
+
+          if (this.checked) {
+            // Add to cart
+            fetch("/cart/add.js", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+              },
+              body: JSON.stringify({
+                items: [{
+                  id: parseInt(variantId),
+                  quantity: 1
+                }]
+              })
+            })
+            .then(response => response.json())
+            .then(data => {
+              console.log("Upsell product added:", data);
+               window.alert("Product Added to Cart");
+               window.location.reload();
+            });
+          } else {
+            // Optional: Remove from cart if unchecked
+            fetch("/cart/change.js", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                "Accept": "application/json"
+              },
+              body: JSON.stringify({
+                id: parseInt(variantId),
+                quantity: 0
+              })
+            })
+            .then(response => response.json())
+            .then(data => {
+              console.log("Upsell product removed:", data);
+   
+            });
+          }
+        });
+      });
+    });
+  </script>
+{% endif %}
+
+
+
+{% schema %}
+  {
+    "name": "Upsell Product",
+    "target":"section",
+    "settings": [
+    {
+      "type": "paragraph",
+      "content": "To enable upsell products, go to Shopify Admin → Settings → Custom data → Products, then click 'Add definition'. Set the name as 'Upsell Products', use the namespace and key 'custom.upsell_products', and choose 'Product' as the type with 'Accept multiple values' enabled. After saving, go to any product and assign upsell products in the metafields section. This section will automatically detect and display those products."
+    },
+      {
+        "type":"text",
+        "id":"upsell_products",
+        "label":"Update Metafiled Namespackey",
+        "default":".custom.upsell_products",
+        "info":"egcustom.upsell_products"
+      },
+       {
+        "type": "color",
+        "id": "upsell_bg",
+        "label": "Background Color",
+        "default": "#000"
+      },
+       {
+        "type": "color",
+        "id": "upsell_text",
+        "label": "Content Color",
+        "default": "#000"
+      },
+      {
+        "type": "range",
+        "id": "upsell-font-size",
+        "label": "Heading Font Size",
+        "min": 12,
+        "max": 48,
+        "step": 1,
+        "unit": "px",
+        "default": 12
+      }
+    ]
+  }
+{% endschema %}

@@ -1,0 +1,55 @@
+# query RunInput {
+#   paymentCustomization {
+#     metafield(namespace: "$app:hide-cod-when-discount", key: "function-configuration") {
+#       value
+#     }
+#   }
+# }
+
+# query RunInput{
+#   cart{
+#     deliveryGroups{
+#       deliveryAddress{
+#         countryCode
+#       }
+#     }
+#   }
+#   paymentMethod{
+#     id
+#     name
+#   }
+# }
+
+
+# query RunInput {
+#   cart {
+#     deliveryGroups {
+#       deliveryAddress {
+#         countryCode
+#       }
+#     }
+#   }
+#   paymentMethods {
+#     id
+#     name
+#   }
+# }
+
+
+query RunInput {
+  cart {
+    deliveryGroups {
+      deliveryAddress {
+        countryCode
+      }
+    }
+    attribute(key: "cod_hide_flag") {
+      key
+      value
+    }
+  }
+  paymentMethods {
+    id
+    name
+  }
+}
